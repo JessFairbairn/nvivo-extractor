@@ -1,0 +1,17 @@
+{
+  "name": "nvivo-extractor",
+  "version": "1.0.0",
+  "description": "Extract Nvivo 14 HTML exports files to CSV",
+  "main": " ",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "export-to-csv": "^1.4.0",
+    "jszip": "^3.10.1",
+    "papaparse": "^5.4.1",
+    "requirejs": "^2.3.7"
+  }
+}
