@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <meta charset="utf-8"/>
         <title>NVivo Dataset Extractor</title>
         <script src="node_modules/requirejs/require.js"></script>
         <script src="script.js" type="module" defer></script>
@@ -8,6 +9,7 @@
     <body>
         <h1>NVivo Extractor</h1>
         <input id="selector" type="file" webkitdirectory/>
+        <progress style="display:none;" id="progress-bar" value="0"></progress>
         <!-- <script id="emptyScript"></script> -->
     </body>
 </html>

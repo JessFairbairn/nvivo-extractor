@@ -6,7 +6,6 @@ require(["node_modules/papaparse/papaparse.min.js", "node_modules/jszip/dist/jsz
 );
 
 const csvConfig = {
-  columns: ["Nvivo ID", "text"],
   dynamicTyping: true,
 };
 
@@ -30,7 +29,12 @@ const readUploadedFileAsText = (inputFile) => {
   });
 };
 
+
 const folderNameRegex = /(?:^.*\/)(.*)(?:\/1\/0.js$)/
+
+const COL_HEADERS_REGEX = /var colHeaders = (\[[\s\S]+?\]);/
+
+const PROGRESS_BAR = document.getElementById("progress-bar");
 
 document.getElementById("selector").addEventListener("change", async (event) => {
   try {
@@ -39,9 +43,17 @@ document.getElementById("selector").addEventListener("change", async (event) => 
       return;
     }
 
-    
-    // TODO: extract the actual column names from "1.html" of each code's root folder
-    // e.g. `var colHeaders = ["","A : text"];`
+    let htmlFiles = Array.from(event.target.files).filter((file) => {
+      return file.webkitRelativePath.endsWith("1.html");
+    });
+    if (htmlFiles.length === 0) {
+      throw new Error("No compatible files- did you select the right folder?");
+    }
+    let htmlFile = await readUploadedFileAsText(htmlFiles[0]);
+    let arrayJson = htmlFile.match(COL_HEADERS_REGEX)[1];
+    let columnNames = JSON.parse(arrayJson);
+    columnNames[0] = "nvivo_id"
+    csvConfig.columns = columnNames;
 
     const dataFiles = Array.from(event.target.files).filter((file) => {
       return file.webkitRelativePath.endsWith("/1/0.js");
@@ -50,6 +62,9 @@ document.getElementById("selector").addEventListener("change", async (event) => 
     if (dataFiles.length === 0) {
       throw new Error("No compatible files- did you select the right folder?");
     }
+
+    PROGRESS_BAR.style.display = "block;"
+    PROGRESS_BAR.max = dataFiles.length;
     for (let myFile of dataFiles) {
       let folderName = myFile.webkitRelativePath.match(folderNameRegex)[1];
       let fileContents = await readUploadedFileAsText(myFile);
@@ -60,9 +75,10 @@ document.getElementById("selector").addEventListener("change", async (event) => 
       if (!Array.isArray(data) || data.flat().some(element => typeof element !== "string")) {
         throw new Error("File format wrong");
       }
-
+      data.unshift(columnNames);
       let outputString = Papa.unparse(data, csvConfig);
       zipForDownload.file(`${folderName}.csv`, outputString);
+      PROGRESS_BAR.value++;
     }
     
     let zipBlob = await zipForDownload.generateAsync({type:"blob"})
