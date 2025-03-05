@@ -38,6 +38,11 @@ document.getElementById("selector").addEventListener("change", async (event) => 
     if (event.target.files.value === "") {
       return;
     }
+
+    
+    // TODO: extract the actual column names from "1.html" of each code's root folder
+    // e.g. `var colHeaders = ["","A : text"];`
+
     const dataFiles = Array.from(event.target.files).filter((file) => {
       return file.webkitRelativePath.endsWith("/1/0.js");
     });
