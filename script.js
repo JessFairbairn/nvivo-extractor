@@ -63,7 +63,7 @@ document.getElementById("selector").addEventListener("change", async (event) => 
       throw new Error("No compatible files- did you select the right folder?");
     }
 
-    PROGRESS_BAR.style.display = "block;"
+    PROGRESS_BAR.style.display = "block";
     PROGRESS_BAR.max = dataFiles.length;
     for (let myFile of dataFiles) {
       let folderName = myFile.webkitRelativePath.match(folderNameRegex)[1];
